@@ -1,0 +1,5 @@
+pytest
+mypy
+wemake-python-styleguide
+ruff
+black

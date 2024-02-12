@@ -1,9 +1,5 @@
 import numpy as np
 
-# Функция f(x)
-def f(x):
-    return np.log(x + 3)
-
 # Начальное приближение
 xt = 7
 # Шаг градиентного спуска
@@ -12,3 +8,14 @@ alpha = 10
 xt_next = xt - alpha * (1 / (xt + 3))
 
 print(xt_next)
+# ответ = 6
+
+#                                                       задание 5
+
+
+
+X = np.array([[1, 2],[4, 5]])
+
+x_diff = (1 / (X+1))
+answer = X - (10 * x_diff)
+print(answer)

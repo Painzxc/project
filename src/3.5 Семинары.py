@@ -79,7 +79,7 @@ class RegressionNet(torch.nn.Module):
 
 
 # Ввод количества скрытых нейронов
-n_hidden_neurons = int(input("Введите количество скрытых нейронов: "))
+n_hidden_neurons = int(input("Введите количество скрытых нейронов: "))  # 30
 # Создание экземпляра модели регрессии
 net = RegressionNet(n_hidden_neurons)
 
@@ -98,7 +98,7 @@ x_validation.unsqueeze_(1)
 y_validation.unsqueeze_(1)
 
 # Оптимизатор Adam для обновления параметров модели
-optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(net.parameters(), lr=0.01)
 
 
 # Функция потерь для обучения модели

@@ -112,3 +112,22 @@ for epoch in range(10):
 
     plt.plot(test_loss_history)
 plt.show()
+
+
+# Выберите случайное изображение из тестового набора данных
+index = random.randint(0, len(X_test))
+image = X_test[index]
+
+# Измените форму изображения и выполните нормализацию
+image = image.reshape(1, -1).float() / 255
+
+# Сделайте предсказание с помощью нейронной сети
+prediction = mnist_net.forward(image)
+
+# Получите предсказанную метку
+predicted_label = torch.argmax(prediction).item()
+
+# Отобразите изображение и предсказанную метку
+plt.imshow(image.reshape(28, 28), cmap="gray")
+plt.title(f"Предсказанная метка: {predicted_label}")
+plt.show()

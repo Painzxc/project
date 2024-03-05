@@ -72,7 +72,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 model.to(device)
-epochs = 5
+epochs = 10
 
 
 optimizer34 = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -88,8 +88,8 @@ transform = transforms.Compose(
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
     ]
 )
-train_path = r"C:/Users/Admin/Desktop/Кодинг/репозитории/project/src/ship_vs_air/train"
-test_path = r"C:/Users/Admin/Desktop/Кодинг/репозитории/project/src/ship_vs_air/test"
+train_path = r"C:/Users/Admin/Desktop/Coding/repos/project/src/ship_vs_air/train"
+test_path = r"C:/Users/Admin/Desktop/Coding/repos/project/src/ship_vs_air/test"
 train_data = dataset.ImageFolder(train_path, transform)
 test_data = dataset.ImageFolder(test_path, transform)
 train_loader_1 = DataLoader(train_data, batch_size=16, shuffle=True)
@@ -115,5 +115,5 @@ for epoch in range(epochs):
     results.append([epoch + 1, train_loss, train_acc * 100, test_loss, test_acc * 100])
 
     if test_loss < best_loss:
-        torch.save(model, "resnet50_best_loss.pth")
+        torch.save(model, "resnet50.pth")
         best_loss = test_loss

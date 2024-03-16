@@ -1,0 +1,11 @@
+path: C:/Users/Admin/Desktop/Coding/repos/project-1/src/YOLO/dataset/ship/obj_train_data
+train: train
+val: test
+test: test
+
+nc: 1  # Количество классов
+names: ['ship']  # Названия классов
+
+model:
+  name: yolov8
+  pretrained: True 

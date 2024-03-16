@@ -6,13 +6,10 @@ from torchvision import transforms
 from PIL import Image
 
 # Path to image folder
-image_folder = "C:/Users/Admin/Desktop/Coding/repos/project-1/src/YOLO/dataset/ship/obj_train_data/ship"
+image_folder = "C:/Users/Admin/Pictures/Screenshots/12"
 
 # Load a model
-model = YOLO(
-    "YOLOv8l.pt",
-    "C:/Users/Admin/Desktop/Coding/repos/project-1/src/ship_vs_air/custom.yaml",
-)
+model = YOLO("yolov8n.pt")
 
 # Get list of image paths
 image_paths = [

@@ -7,5 +7,5 @@ nc: 1  # Количество классов
 names: ['object']  # Названия классов
 
 model:
-  name: YOLOv8l
+  name: yolov8n
   pretrained: False 

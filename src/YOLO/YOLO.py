@@ -5,8 +5,8 @@ model = YOLO()  # load a pretrained YOLOv8n detection model
 model.train(
     data="C:/Users/Admin/Desktop/Coding/repos/project-1/src/YOLO/custom.yaml",
     imgsz=640,
-    epochs=3,
-    batch=16,
+    epochs=50,
+    batch=8,
 )  # train the model
 
-model.save("YOLOv8l.pt")
+model.save("yolov8n.pt")

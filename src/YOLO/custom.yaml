@@ -4,8 +4,8 @@ val: test
 test: test
 
 nc: 1  # Количество классов
-names: ['ship']  # Названия классов
+names: ['object']  # Названия классов
 
 model:
-  name: yolov8
-  pretrained: True 
+  name: YOLOv8l
+  pretrained: False 

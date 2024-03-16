@@ -6,7 +6,7 @@ model.train(
     data="C:/Users/Admin/Desktop/Coding/repos/project-1/src/YOLO/custom.yaml",
     imgsz=640,
     epochs=3,
-    batch=2,
+    batch=16,
 )  # train the model
 
-model.save("trained_yolov8.pt")
+model.save("YOLOv8l.pt")

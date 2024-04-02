@@ -5,6 +5,7 @@ import logging
 import pydantic
 import numpy as np
 from ultralytics import YOLO
+from typing import List
 
 from fastapi import FastAPI, File, UploadFile, status
 from fastapi.encoders import jsonable_encoder
@@ -35,12 +36,23 @@ service_config_adapter = pydantic.TypeAdapter(ServiceConfig)
 service_config_python = service_config_adapter.validate_python(service_config_json)
 
 
-class ServiceOutput(pydantic.BaseModel):
+class ImageDimensions(pydantic.BaseModel):
+    width: int
+    height: int
+    channels: int = pydantic.Field(default=3)
+
+
+class CropCoordinates(pydantic.BaseModel):
     xtl: int
     ytl: int
     xbr: int
     ybr: int
-    class_name: str
+
+
+class ServiceOutput(pydantic.BaseModel):
+    image_dimensions: ImageDimensions
+    ships: List[CropCoordinates | None]
+    planes: List[CropCoordinates | None]
 
 
 detector = YOLO(service_config_python.path_to_detector)
@@ -56,7 +68,7 @@ def load_classifier(path_to_pth_weights, device):
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 classifier = load_classifier(service_config_python.path_to_classifier, device)
 
-class_names = ["Aircraft", "Ship"]  # Замените это на ваш список имен классов
+class_names = ["Aircraft", "Ship"]  # Replace this with your list of class names
 
 
 @app.get(
@@ -70,7 +82,7 @@ def health_check() -> str:
     return '{"Status" : "OK"}'
 
 
-@app.post("/file/")
+@app.post("/file/", response_model=ServiceOutput)
 async def inference(image: UploadFile = UploadFile(...)):
     image_content = await image.read()
     image = Image.open(io.BytesIO(image_content))
@@ -78,9 +90,15 @@ async def inference(image: UploadFile = UploadFile(...)):
     transform = transforms.Resize((640, 640))
     image = transform(image)
     cv_image = np.array(image)
-    logger.info(f"Принята картинка размерности: {cv_image.shape}")
+    logger.info(f"Received image of dimensions: {cv_image.shape}")
 
-    output_dict = {"objects": []}
+    output_dict = {
+        "image_dimensions": ImageDimensions(
+            width=cv_image.shape[1], height=cv_image.shape[0]
+        ),
+        "ships": [],
+        "planes": [],
+    }
 
     detector_outputs = detector(cv_image)
     for box in detector_outputs[0].boxes.xyxy:
@@ -99,19 +117,16 @@ async def inference(image: UploadFile = UploadFile(...)):
         crop_tensor = torch.unsqueeze(crop_tensor, 0)
         class_id = classify_image(classifier, crop_tensor)
         class_name = class_names[class_id]
-        output_dict["objects"].append(
-            {
-                "xtl": int(xtl),
-                "xbr": int(xbr),
-                "ytl": int(ytl),
-                "ybr": int(ybr),
-                "class_name": class_name,
-            }
-        )
+        if class_name == "Aircraft":
+            output_dict["planes"].append(
+                CropCoordinates(xtl=int(xtl), xbr=int(xbr), ytl=int(ytl), ybr=int(ybr))
+            )
+        elif class_name == "Ship":
+            output_dict["ships"].append(
+                CropCoordinates(xtl=int(xtl), xbr=int(xbr), ytl=int(ytl), ybr=int(ybr))
+            )
 
-    service_output = {
-        "objects": [ServiceOutput(**item) for item in output_dict["objects"]]
-    }
+    service_output = ServiceOutput(**output_dict)
     service_output_json = jsonable_encoder(service_output)
 
     return JSONResponse(content=service_output_json)
